@@ -2,7 +2,7 @@ export const arrayPersonajes = [
     {
       id: 1,
       nombre: 'Capitan',
-      imagen: 'capitan.png'
+      imagen: 'capitan.webp'
     },
     {
       id: 2,
