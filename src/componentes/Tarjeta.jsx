@@ -9,13 +9,22 @@ export function Tarjeta (){
 }
 */
 
+import { useState } from "react";
 
 
-export function Tarjeta ({nombre, imagen}){
-    return(
-        <div className= "bg-slate-200 rounded w-[225px] h-[300px] border p-2 shadow-lg text-center">
-            <img className="h-[250px]" src={imagen}/>
+
+export function Tarjeta({ nombre, imagen }) {
+    const [contadorClicks, setContadorClicks] = useState(0);
+
+    const handleClick = () => {
+        setContadorClicks(contadorClicks + 1);
+    };
+
+    return (
+        <div className="bg-slate-200 rounded w-[225px] h-[325px] border p-2 shadow-lg text-center">
+            <p>Clicks: {contadorClicks}</p>
+            <img className="h-[250px]" src={imagen} onClick={handleClick} />
             <h2 className="pt-1">{nombre}</h2>
         </div>
-    )
+    );
 }
