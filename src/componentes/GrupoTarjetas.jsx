@@ -3,7 +3,7 @@ import { Tarjeta } from "./Tarjeta";
 
 export function GrupoTarjetas() {
   return (
-    <div className="grid grid-cols-5 gap-2"> {/* Cambio a gap-2 */}
+    <div className="flex mx-auto flex-wrap bg-slate-599 gap-2 p-5"> {/* Cambio a gap-2 */}
       {arrayPersonajes.map(personaje => (
         <Tarjeta
           key={personaje.id}
