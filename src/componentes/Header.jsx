@@ -1,12 +1,15 @@
+import { Link } from "react-router-dom";
+
+
 export function Header(){
     return(
         
         <div className="flex justify-center p-6 items-center text-white">
             <ul className="flex space-x-4">
-                    <li><a className="border rounded p-3 shadow" href="/">Home</a></li>
-                    <li><a className="border rounded p-3 shadow" href="/">Pokemons Memory</a></li>
-                    <li><a className="border rounded p-3 shadow" href="/">Marvel Memory</a></li>
-                    <li><a className="border rounded p-3 shadow" href="/">A cerca de</a></li>        
+                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/about">About</Link></li>
+                    <li><Link to="/game">Juego</Link></li>
+                       
             </ul>
         </div>
     )
