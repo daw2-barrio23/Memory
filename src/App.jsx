@@ -1,21 +1,19 @@
-import { GrupoTarjetas } from "./componentes/GrupoTarjetas"
-import { Header } from "./componentes/Header"
-//import { Tarjeta } from "./componentes/Tarjeta"
-import { Juego } from "./vistas/Juego"
 
-
+import { ClicksProvider } from './context/GlobalContext'; // Asegúrate de tener la ruta correcta
+import { GrupoTarjetas } from './componentes/GrupoTarjetas';
+import { Header } from './componentes/Header';
+import { Juego } from './vistas/Juego';
 
 function App() {
-  
-
   return (
-    <>
-      <Header />
-      <Juego />
-      {/* <Tarjeta nombre="Capitan" imagen="../public/capitan.webp"/> */}
-      <GrupoTarjetas></GrupoTarjetas>
-    </>
-  )
+    <ClicksProvider>
+      <>
+        <Header />
+        <Juego />
+        <GrupoTarjetas />
+      </>
+    </ClicksProvider>
+  );
 }
 
-export default App
+export default App;
