@@ -1,5 +1,3 @@
-// GrupoTarjetas.jsx
-
 import { useState, useEffect } from 'react';
 import { Tarjeta } from './Tarjeta';
 
@@ -52,13 +50,19 @@ export function GrupoTarjetas() {
     return array;
   };
 
+  const handleCardClick = (id) => {
+    console.log("ID de la tarjeta:", id); // Imprime el ID en la consola
+  };
+
   return (
     <div className="flex mx-auto flex-wrap bg-slate-599 gap-2 p-5">
       {pokemonData.map((pokemon, index) => (
         <Tarjeta
           key={index}
+          id={pokemon.id} // Pasar el ID como propiedad
           nombre={pokemon.nombre}
           imagen={pokemon.imagen}
+          onClick={() => handleCardClick(pokemon.id)} // Pasar el ID al hacer clic en la tarjeta
         />
       ))}
     </div>
