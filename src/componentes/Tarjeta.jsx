@@ -1,21 +1,19 @@
+// Tarjeta.jsx
+
 import { useState } from 'react';
 import { useClicksContext } from '../context/GlobalContext'; // Asegúrate de tener la ruta correcta
 
-export function Tarjeta({ id, nombre, imagen, onClick }) {
+export function Tarjeta({ nombre, imagen }) {
   const [volteada, setVolteada] = useState(false);
   const [contadorClicks, setContadorClicks] = useState(0);
   const { incrementClicks } = useClicksContext();
-
   const handleClick = () => {
     setContadorClicks(contadorClicks + 1);
     incrementClicks();
     setVolteada(true); // Voltear la tarjeta al hacer clic
-
     setTimeout(() => {
       setVolteada(false); // Volver a ocultar la tarjeta después de un segundo
     }, 1000);
-
-    onClick(id); // Llamar a la función onClick pasando el ID
   };
 
   return (

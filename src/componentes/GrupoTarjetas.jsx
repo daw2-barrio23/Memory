@@ -1,9 +1,10 @@
+// GrupoTarjetas.jsx
+
 import { useState, useEffect } from 'react';
 import { Tarjeta } from './Tarjeta';
 
 export function GrupoTarjetas() {
   const [pokemonData, setPokemonData] = useState([]);
-
   useEffect(() => {
     const fetchPokemonData = async () => {
       const pokemonIds = generateRandomPokemonIds(9); // Obtener 9 IDs aleatorias
@@ -12,10 +13,8 @@ export function GrupoTarjetas() {
       const shuffledPokemonData = shuffleArray(duplicatedPokemonData); // Desordenar las tarjetas
       setPokemonData(shuffledPokemonData);
     };
-
     fetchPokemonData();
   }, []); // Ejecutar solo una vez al montar el componente
-
   const generateRandomPokemonIds = (count) => {
     const randomIds = [];
     for (let i = 0; i < count; i++) {
@@ -23,7 +22,6 @@ export function GrupoTarjetas() {
     }
     return randomIds;
   };
-
   const fetchPokemon = async (id) => {
     try {
       const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
@@ -40,7 +38,6 @@ export function GrupoTarjetas() {
       console.error('Error fetching Pokémon data:', error);
     }
   };
-
   const shuffleArray = (array) => {
     // Algoritmo de Fisher-Yates para desordenar el array
     for (let i = array.length - 1; i > 0; i--) {
@@ -49,22 +46,15 @@ export function GrupoTarjetas() {
     }
     return array;
   };
-
-  const handleCardClick = (id) => {
-    console.log("ID de la tarjeta:", id); // Imprime el ID en la consola
-  };
-
   return (
     <div className="flex mx-auto flex-wrap bg-slate-599 gap-2 p-5">
       {pokemonData.map((pokemon, index) => (
         <Tarjeta
-          key={index}
-          id={pokemon.id} // Pasar el ID como propiedad
+          key={index}    
           nombre={pokemon.nombre}
           imagen={pokemon.imagen}
-          onClick={() => handleCardClick(pokemon.id)} // Pasar el ID al hacer clic en la tarjeta
-        />
-      ))}
-    </div>
-  );
-}
+          />
+        ))}
+      </div>
+    );
+  }
