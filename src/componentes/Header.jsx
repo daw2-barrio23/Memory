@@ -9,7 +9,8 @@ export function Header(){
                     <li><Link to="/">Home</Link></li>
                     <li><Link to="/about">About</Link></li>
                     <li><Link to="/game">Juego</Link></li>
-                       
+                    <li><Link to="/login">Login</Link></li>
+                    <li><Link to="/registro">Registro</Link></li>
             </ul>
         </div>
     )
