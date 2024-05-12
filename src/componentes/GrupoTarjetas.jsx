@@ -1,27 +1,38 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tarjeta } from './Tarjeta';
 
 export function GrupoTarjetas() {
   const [pokemonData, setPokemonData] = useState([]);
-  const [cartasSeleccionadas, setCartasSeleccionadas] = useState([]); // Estado para almacenar las cartas seleccionadas
+  const [cartasSeleccionadas, setCartasSeleccionadas] = useState([]);
+  const [tiempoRestante, setTiempoRestante] = useState(20);
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     const fetchPokemonData = async () => {
-      const pokemonIds = generateRandomPokemonIds(9);
-      const fetchedPokemonData = await Promise.all(pokemonIds.map(id => fetchPokemon(id)));
-      const shuffledPokemonData = shuffleArray(fetchedPokemonData);
-      setPokemonData(shuffledPokemonData);
+      try {
+        const uniquePokemon = await obtenerPokemonUnicos(9);
+        // Duplicar los Pokémon únicos
+        const duplicatedPokemon = [...uniquePokemon, ...uniquePokemon];
+        // Mezclar la lista de Pokémon
+        const shuffledPokemon = shuffleArray(duplicatedPokemon);
+        setPokemonData(shuffledPokemon);
+      } catch (error) {
+        console.error('Error fetching Pokémon data:', error);
+      }
     };
     fetchPokemonData();
   }, []);
 
-  const generateRandomPokemonIds = (count) => {
-    const randomIds = [];
-    while (randomIds.length < count) {
+  const obtenerPokemonUnicos = async (count) => {
+    const uniquePokemon = [];
+    while (uniquePokemon.length < count) {
       const randomId = Math.floor(Math.random() * 898) + 1;
-      randomIds.push(randomId, randomId); // Agregar cada ID dos veces
+      const pokemon = await fetchPokemon(randomId);
+      if (!uniquePokemon.some(p => p.id === pokemon.id)) {
+        uniquePokemon.push(pokemon);
+      }
     }
-    return shuffleArray(randomIds);
+    return uniquePokemon;
   };
 
   const fetchPokemon = async (id) => {
@@ -50,22 +61,31 @@ export function GrupoTarjetas() {
   };
 
   const handleCardClick = (index) => {
-    // Verificar si la carta ya está seleccionada o emparejada
     if (!cartasSeleccionadas.includes(index) && !pokemonData[index].matched) {
-      // Si no está seleccionada ni emparejada, agregar la carta al array de cartas seleccionadas
       setCartasSeleccionadas((prevCartasSeleccionadas) => [...prevCartasSeleccionadas, index]);
+      if (tiempoRestante === 20) {
+        // Inicia el temporizador cuando se hace clic en la primera carta
+        const timer = setInterval(() => {
+          setTiempoRestante((prevTiempo) => prevTiempo - 1);
+        }, 1000);
+        return () => clearInterval(timer);
+      }
     }
   };
 
   useEffect(() => {
-    // Verificar si se han seleccionado dos cartas
+    if (tiempoRestante === 0) {
+      // Detiene el temporizador cuando el tiempo llega a cero y marca el fin del juego
+      setGameOver(true);
+    }
+  }, [tiempoRestante]);
+
+  useEffect(() => {
     if (cartasSeleccionadas.length === 2) {
       const [index1, index2] = cartasSeleccionadas;
       const pokemon1 = pokemonData[index1];
       const pokemon2 = pokemonData[index2];
-      // Verificar si las cartas coinciden
       if (pokemon1.id === pokemon2.id) {
-        // Si las cartas coinciden, mantenerlas volteadas y limpiar las cartas seleccionadas
         setPokemonData((prevPokemonData) => {
           const updatedPokemonData = [...prevPokemonData];
           updatedPokemonData[index1].matched = true;
@@ -73,7 +93,6 @@ export function GrupoTarjetas() {
           return updatedPokemonData;
         });
       } else {
-        // Si las cartas no coinciden, esperar un momento y luego ocultar las cartas
         const timer = setTimeout(() => {
           setPokemonData((prevPokemonData) => {
             const updatedPokemonData = [...prevPokemonData];
@@ -83,23 +102,27 @@ export function GrupoTarjetas() {
           });
           setCartasSeleccionadas([]);
         }, 1000);
-        // Limpiar el temporizador si el componente se desmonta antes de que el tiempo de espera termine
         return () => clearTimeout(timer);
       }
     }
-  }, [cartasSeleccionadas]); // Se ejecutará cuando cambien las cartas seleccionadas
+  }, [cartasSeleccionadas]);
 
   return (
     <div className="flex mx-auto flex-wrap bg-slate-599 gap-2 p-5">
-      {pokemonData.map((pokemon, index) => (
-        <Tarjeta
-          key={index}
-          nombre={pokemon.nombre}
-          imagen={pokemon.imagen}
-          volteada={pokemon.matched || cartasSeleccionadas.includes(index)} // Mostrar la carta si está volteada o si está seleccionada
-          onClick={() => handleCardClick(index)}
-        />
-      ))}
+      {gameOver ? (
+        <h1 className="text-white text-center mt-8">¡JUEGO TERMINADO!</h1>
+      ) : (
+        pokemonData.map((pokemon, index) => (
+          <Tarjeta
+            key={index}
+            nombre={pokemon.nombre}
+            imagen={pokemon.imagen}
+            volteada={pokemon.matched || cartasSeleccionadas.includes(index)}
+            onClick={() => handleCardClick(index)}
+          />
+        ))
+      )}
+      <div className="text-white text-center mt-8">Tiempo restante: {tiempoRestante}</div>
     </div>
   );
 }
