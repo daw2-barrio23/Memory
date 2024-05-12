@@ -6,6 +6,7 @@ export function GrupoTarjetas() {
   const [cartasSeleccionadas, setCartasSeleccionadas] = useState([]);
   const [tiempoRestante, setTiempoRestante] = useState(20);
   const [gameOver, setGameOver] = useState(false);
+  const [puntuacion, setPuntuacion] = useState(0); // Estado para la puntuación
 
   useEffect(() => {
     const fetchPokemonData = async () => {
@@ -92,6 +93,7 @@ export function GrupoTarjetas() {
           updatedPokemonData[index2].matched = true;
           return updatedPokemonData;
         });
+        setPuntuacion((prevPuntuacion) => prevPuntuacion + 1); // Incrementa la puntuación en 1
       } else {
         const timer = setTimeout(() => {
           setPokemonData((prevPokemonData) => {
@@ -108,7 +110,12 @@ export function GrupoTarjetas() {
   }, [cartasSeleccionadas]);
 
   return (
-    <div className="flex mx-auto flex-wrap bg-slate-599 gap-2 p-5">
+    <div>
+      <div>
+        <div className="text-white text-center mt-8">Tiempo restante: {tiempoRestante}</div>
+        <div className="text-white text-center mt-8">Puntuación: {puntuacion}</div>
+      </div>
+      <div className="flex mx-auto flex-wrap bg-slate-599 gap-2 p-5">
       {gameOver ? (
         <h1 className="text-white text-center mt-8">¡JUEGO TERMINADO!</h1>
       ) : (
@@ -122,7 +129,10 @@ export function GrupoTarjetas() {
           />
         ))
       )}
-      <div className="text-white text-center mt-8">Tiempo restante: {tiempoRestante}</div>
     </div>
+
+
+    </div>
+    
   );
 }
