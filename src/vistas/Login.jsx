@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { supabase } from '../componentes/Supabase';
 
 export function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,17 +16,24 @@ export function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Guardar los datos en localStorage
-    localStorage.setItem('loginData', JSON.stringify(formData));
-    // Lógica para enviar los datos al servidor o realizar otras acciones
-    console.log('Datos guardados:', formData);
-    // Limpiar los campos después de guardar los datos
-    setFormData({
-      email: '',
-      password: ''
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password
+      });
+      if (error) throw error;
+      console.log('User logged in:', data);
+      setFormData({
+        email: '',
+        password: ''
+      });
+      setError(null);
+    } catch (error) {
+      console.error('Error logging in:', error.message);
+      setError(error.message);
+    }
   };
 
   return (
@@ -40,6 +49,7 @@ export function Login() {
             <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">Contraseña</label>
             <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className="border rounded w-full px-3 py-2" placeholder="Contraseña" />
           </div>
+          {error && <p className="text-red-500">{error}</p>}
           <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded w-full">Iniciar sesión</button>
         </form>
       </div>

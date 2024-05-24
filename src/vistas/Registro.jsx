@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '../componentes/Supabase';
 
 export function Registro() {
   const [formData, setFormData] = useState({
@@ -8,6 +9,8 @@ export function Registro() {
     password: ''
   });
 
+  const [error, setError] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -16,19 +19,36 @@ export function Registro() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Guardar los datos en localStorage
-    localStorage.setItem('registroData', JSON.stringify(formData));
-    // Lógica para enviar los datos al servidor o realizar otras acciones
-    console.log('Datos guardados:', formData);
-    // Limpiar los campos después de guardar los datos
-    setFormData({
-      nombre: '',
-      apellidos: '',
-      email: '',
-      password: ''
+    setError(null); // Reset error state
+
+    // Registrar el usuario en Supabase
+    const { user, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password
+    }, {
+      data: {
+        nombre: formData.nombre,
+        apellidos: formData.apellidos
+      }
     });
+
+    if (error) {
+      console.error('Error registrando usuario:', error);
+      setError(error.message);
+    } else {
+      console.log('Usuario registrado:', user);
+      // Guardar los datos en localStorage (opcional)
+      localStorage.setItem('registroData', JSON.stringify(formData));
+      // Limpiar los campos después de registrar
+      setFormData({
+        nombre: '',
+        apellidos: '',
+        email: '',
+        password: ''
+      });
+    }
   };
 
   return (
@@ -52,6 +72,7 @@ export function Registro() {
             <label htmlFor="password" className="block text-gray-700 font-semibold mb-2">Contraseña</label>
             <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className="border rounded w-full px-3 py-2" placeholder="Contraseña" />
           </div>
+          {error && <div className="text-red-500 mb-4">{error}</div>}
           <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded w-full">Registrarse</button>
         </form>
       </div>
